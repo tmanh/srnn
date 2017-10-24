@@ -101,5 +101,5 @@ ENV/
 .mypy_cache/
 
 # This project
-.txt
-.pik
+*.txt
+*.pik
