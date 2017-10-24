@@ -570,7 +570,7 @@ def append2array(a, add, choose_list=None):
 
 def save_data2files(folder, train_activities, test_activities):
     high_level_activities = '/home/anhtruong/Workspace/srnn/data/features_cad120/high-level-activity_groundtruth.txt'
-    dataset = '/home/anhtruong/Workspace/srnn/data/features_cad120/dataset/fold_{0}'.format(fold)
+    dataset = '/home/anhtruong/Workspace/srnn/data/CAD-120/fold_{0}'.format(fold)
 
     high_level_activity_groundtruth = read_high_level_activity_groundtruth(high_level_activities)
 
