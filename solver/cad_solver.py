@@ -328,8 +328,6 @@ class CADSolver(object):
 
             start_train = timeit.default_timer()
             self.traina_fn(self.train_thh, self.train_too, self.train_soo, self.train_soh, self.train_activity)
-            self.trains_fn(self.train_thh, self.train_too, self.train_soo, self.train_soh,
-                           self.train_human.reshape((-1)))
             self.traino_fn(self.train_too, self.train_soo, self.train_soh, self.train_objects.reshape((-1)))
             stop_train = timeit.default_timer()
             print "Train time = " + str(stop_train - start_train) + " seconds"
