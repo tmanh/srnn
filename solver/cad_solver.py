@@ -77,19 +77,19 @@ class CADSolver(object):
         self.l_subout = None
         self.l_objout = None
 
-        self.hprediction = None
+        self.aprediction = None
         self.sprediction = None
         self.oprediction = None
 
-        self.hloss = None
+        self.aloss = None
         self.sloss = None
         self.oloss = None
 
-        self.hparams = None
+        self.aparams = None
         self.sparams = None
         self.oparams = None
 
-        self.hupdates = None
+        self.aupdates = None
         self.supdates = None
         self.oupdates = None
 
@@ -248,20 +248,20 @@ class CADSolver(object):
 
     def create_function(self):
         # create loss function
-        self.hprediction = lasagne.layers.get_output(self.l_actout)
+        self.aprediction = lasagne.layers.get_output(self.l_actout)
         self.sprediction = lasagne.layers.get_output(self.l_subout)
         self.oprediction = lasagne.layers.get_output(self.l_objout)
 
-        self.hloss = CADSolver.create_loss(self.hprediction, self.l_actout, self.target_var)
+        self.aloss = CADSolver.create_loss(self.aprediction, self.l_actout, self.target_var)
         self.sloss = CADSolver.create_loss(self.sprediction, self.l_subout, self.target_var)
         self.oloss = CADSolver.create_loss(self.oprediction, self.l_objout, self.target_var)
 
         # create parameter update expressions
-        self.hparams = lasagne.layers.get_all_params(self.l_actout, trainable=True)
+        self.aparams = lasagne.layers.get_all_params(self.l_actout, trainable=True)
         self.sparams = lasagne.layers.get_all_params(self.l_subout, trainable=True)
         self.oparams = lasagne.layers.get_all_params(self.l_objout, trainable=True)
 
-        self.hupdates = lasagne.updates.adagrad(self.hloss, self.hparams, learning_rate=LEARNING_RATE)
+        self.aupdates = lasagne.updates.adagrad(self.aloss, self.aparams, learning_rate=LEARNING_RATE)
         self.supdates = lasagne.updates.adagrad(self.sloss, self.sparams, learning_rate=LEARNING_RATE)
         self.oupdates = lasagne.updates.adagrad(self.oloss, self.oparams, learning_rate=LEARNING_RATE)
 
@@ -271,7 +271,7 @@ class CADSolver(object):
         train_actdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4, self.target_var]
         train_subdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4, self.target_var]
 
-        self.traina_fn = theano.function(train_actdim, self.hloss, updates=self.hupdates, allow_input_downcast=True)
+        self.traina_fn = theano.function(train_actdim, self.aloss, updates=self.aupdates, allow_input_downcast=True)
         self.trains_fn = theano.function(train_subdim, self.sloss, updates=self.supdates, allow_input_downcast=True)
         self.traino_fn = theano.function(train_objdim, self.oloss, updates=self.oupdates, allow_input_downcast=True)
 
@@ -295,20 +295,18 @@ class CADSolver(object):
         best_acc = 0.0
         samples = 0
 
-        print self.test_activity.shape[0]
-
         best_target = []
         best_output = []
         for epoch in range(1501):
             if epoch % 10 == 0:
-                acc = 0
                 n = self.test_activity.shape[0]
                 target = []
                 output = []
 
                 predicted_output = self.predicta_fn(self.test_thh, self.test_too, self.test_soo, self.test_soh)
+                acc = np.mean((predicted_output == self.test_activity).astype(int))
 
-                print "{}\n{}\n----".format(self.test_activity, predicted_output)
+                # print "{}\n{}\n----".format(self.test_activity, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_activity, predicted_output))
 
                 for i in range(self.test_activity.shape[0]):
@@ -334,11 +332,12 @@ class CADSolver(object):
                            self.train_human.reshape((-1)))
             self.traino_fn(self.train_too, self.train_soo, self.train_soh, self.train_objects.reshape((-1)))
             stop_train = timeit.default_timer()
+            print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
 
         f.close()
 
-        print best_acc / samples
+        print best_acc
         return best_acc, samples, best_target, best_output
 
     def sub_detection(self):
@@ -359,7 +358,7 @@ class CADSolver(object):
                 predicted_output = self.predicts_fn(self.test_thh, self.test_too, self.test_soo, self.test_soh)
                 predicted_output = np.reshape(predicted_output, (-1, MAXIMUM_TIME_STEP))
 
-                print "{}\n{}\n----".format(self.test_human, predicted_output)
+                # print "{}\n{}\n----".format(self.test_human, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_human, predicted_output))
 
                 for i in range(self.test_human.shape[0]):
@@ -391,6 +390,7 @@ class CADSolver(object):
                            self.train_human.reshape((-1)))
             self.traino_fn(self.train_too, self.train_soo, self.train_soh, self.train_objects.reshape((-1)))
             stop_train = timeit.default_timer()
+            print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
 
         f.close()
@@ -417,7 +417,7 @@ class CADSolver(object):
                 predicted_output = self.predicto_fn(self.test_too, self.test_soo, self.test_soh)
                 predicted_output = np.reshape(predicted_output, (-1, MAXIMUM_OBJECTS, MAXIMUM_TIME_STEP))
 
-                print "{}\n{}\n----".format(self.test_objects, predicted_output)
+                # print "{}\n{}\n----".format(self.test_objects, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_objects, predicted_output))
 
                 for i in range(self.test_objects.shape[0]):
@@ -450,6 +450,7 @@ class CADSolver(object):
                            self.train_human.reshape((-1)))
             self.traino_fn(self.train_too, self.train_soo, self.train_soh, self.train_objects.reshape((-1)))
             stop_train = timeit.default_timer()
+            print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
 
         f.close()
@@ -474,7 +475,7 @@ class CADSolver(object):
                 predicted_output = self.predicts_fn(self.test_thh, self.test_too, self.test_soo, self.test_soh)
                 predicted_output = np.reshape(predicted_output, (-1, MAXIMUM_TIME_STEP))
 
-                print "{}\n{}\n----".format(self.test_human_anticipation, predicted_output)
+                # print "{}\n{}\n----".format(self.test_human_anticipation, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_human_anticipation, predicted_output))
 
                 for i in range(self.test_human_anticipation.shape[0]):
@@ -507,6 +508,7 @@ class CADSolver(object):
             self.traino_fn(self.train_too, self.train_soo, self.train_soh,
                            self.train_objects_anticipation.reshape((-1)))
             stop_train = timeit.default_timer()
+            print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
 
         f.close()
@@ -532,7 +534,7 @@ class CADSolver(object):
                 predicted_output = self.predicto_fn(self.test_too, self.test_soo, self.test_soh)
                 predicted_output = np.reshape(predicted_output, (-1, MAXIMUM_OBJECTS, MAXIMUM_TIME_STEP))
 
-                print "{}\n{}\n----".format(self.test_objects_anticipation, predicted_output)
+                # print "{}\n{}\n----".format(self.test_objects_anticipation, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_objects_anticipation, predicted_output))
 
                 for i in range(self.test_objects_anticipation.shape[0]):
@@ -566,6 +568,7 @@ class CADSolver(object):
             self.traino_fn(self.train_too, self.train_soo, self.train_soh,
                            self.test_objects_anticipation.reshape((-1)))
             stop_train = timeit.default_timer()
+            print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
 
         f.close()

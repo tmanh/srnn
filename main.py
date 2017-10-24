@@ -68,15 +68,15 @@ def test_cad(mode=0):
 
 
 def cad():
-    for i in [2, 4]:
+    for i in [0, 4]:
         test_cad(mode=i)
 
 
 # parameter : gpu device, cnmem value, dataset
 # list datasets: cad, sbu, m2i
 if __name__ == '__main__':
-    # set_environ(sys.argv[1], sys.argv[2])
-    set_environ("cpu", "0.8")
+    set_environ(sys.argv[1], sys.argv[2])
+    # set_environ("cpu", "0.8")
     from solver.cad_solver import *
 
     cad()
