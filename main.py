@@ -32,7 +32,7 @@ def test_cad(mode=0):
     list_all_target = []
     list_all_output = []
 
-    for i in range(1):
+    for i in range(5):
         all_acc = 0.0
         all_n = 0
         all_target = []

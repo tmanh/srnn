@@ -304,7 +304,7 @@ class CADSolver(object):
                 output = []
 
                 predicted_output = self.predicta_fn(self.test_thh, self.test_too, self.test_soo, self.test_soh)
-                acc = np.sum((predicted_output == self.test_activity).astype(int))
+                acc = np.sum((predicted_output == self.test_activity).astype(float))
 
                 # print "{}\n{}\n----".format(self.test_activity, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_activity, predicted_output))
