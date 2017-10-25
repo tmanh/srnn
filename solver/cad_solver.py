@@ -478,6 +478,8 @@ class CADSolver(object):
 
                 for i in range(self.test_human_anticipation.shape[0]):
                     for s in range(self.test_human_anticipation.shape[1] - 1, -1, -1):
+                        if self.test_human_anticipation[i, s] == 11:
+                            continue
                         if self.test_human_anticipation[i, s] == 0:
                             break
 
@@ -538,6 +540,8 @@ class CADSolver(object):
                 for i in range(self.test_objects_anticipation.shape[0]):
                     for o in range(self.test_objects_anticipation.shape[1]):
                         for s in range(self.test_objects_anticipation.shape[2] - 1, -1, -1):
+                            if self.test_objects_anticipation[i, o, s] == 13:
+                                continue
                             if self.test_objects_anticipation[i, o, s] == 0:
                                 break
 
