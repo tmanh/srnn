@@ -107,3 +107,5 @@ ENV/
 *.pms
 
 data/features_cad120/high-level-activity-labels
+
+*.npy
