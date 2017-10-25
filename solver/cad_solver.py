@@ -26,7 +26,7 @@ GRAD_CLIP = 100
 # Optimization learning rate
 LEARNING_RATE = 0.1
 # Regularization rate
-REGULARIZE_RATE = 1e-5
+REGULARIZE_RATE = 1e-4
 
 MAXIMUM_TIME_STEP = 25
 MAXIMUM_OBJECTS = 5
@@ -110,8 +110,7 @@ class CADSolver(object):
         self.create_function()
 
     def get_data(self):
-        test_data = cPickle.load(
-            open('{0}/test_data.pik'.format(self.datapath)))
+        test_data = cPickle.load(open('{0}/test_data.pik'.format(self.datapath)))
         self.test_activity = test_data['labels_activity']
         self.test_human = test_data['labels_human']
         self.test_human_anticipation = test_data['labels_human_anticipation']
@@ -122,8 +121,7 @@ class CADSolver(object):
         self.test_too = test_data['too_features']
         self.test_soo = test_data['soo_features']
 
-        train_data = cPickle.load(
-            open('{0}/train_data.pik'.format(self.datapath)))
+        train_data = cPickle.load(open('{0}/train_data.pik'.format(self.datapath)))
         self.train_activity = train_data['labels_activity']
         self.train_human = train_data['labels_human']
         self.train_human_anticipation = train_data['labels_human_anticipation']
@@ -266,7 +264,8 @@ class CADSolver(object):
         self.oupdates = lasagne.updates.adagrad(self.oloss, self.oparams, learning_rate=LEARNING_RATE)
 
         # compile training function that updates parameters
-        # and returns training loss
+        # and returns training loss,
+        # use trained network for predictions
         train_objdim = [self.input_var2, self.input_var3, self.input_var4, self.target_var]
         train_actdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4, self.target_var]
         train_subdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4, self.target_var]
@@ -275,7 +274,6 @@ class CADSolver(object):
         self.trains_fn = theano.function(train_subdim, self.sloss, updates=self.supdates, allow_input_downcast=True)
         self.traino_fn = theano.function(train_objdim, self.oloss, updates=self.oupdates, allow_input_downcast=True)
 
-        # use trained network for predictions
         test_objdim = [self.input_var2, self.input_var3, self.input_var4]
         test_actdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4]
         test_subdim = [self.input_var1, self.input_var2, self.input_var3, self.input_var4]
