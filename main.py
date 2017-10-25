@@ -32,9 +32,6 @@ def test_cad(mode=0):
     list_all_target = []
     list_all_output = []
 
-    best_acc = 0.0
-    worst_acc = 1.0
-
     for i in range(1):
         all_acc = 0.0
         all_n = 0
@@ -50,17 +47,9 @@ def test_cad(mode=0):
 
             print all_acc / all_n
 
-        if all_acc / all_n > best_acc:
-            best_acc = all_acc / all_n
-        if all_acc / all_n < worst_acc:
-            worst_acc = all_acc / all_n
-
         list_all_target.extend(all_target)
         list_all_output.extend(all_output)
         list_all_acc.append([all_acc / all_n])
-
-    print best_acc
-    print worst_acc
 
     np.save(("CAD_acc_" + modes[mode]), list_all_acc)
     np.save(("CAD_target_" + modes[mode]), list_all_target)
@@ -68,7 +57,7 @@ def test_cad(mode=0):
 
 
 def cad():
-    for i in [0, 4]:
+    for i in range(0, 4):
         test_cad(mode=i)
 
 

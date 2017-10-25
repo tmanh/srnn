@@ -304,7 +304,7 @@ class CADSolver(object):
                 output = []
 
                 predicted_output = self.predicta_fn(self.test_thh, self.test_too, self.test_soo, self.test_soh)
-                acc = np.mean((predicted_output == self.test_activity).astype(int))
+                acc = np.sum((predicted_output == self.test_activity).astype(int))
 
                 # print "{}\n{}\n----".format(self.test_activity, predicted_output)
                 f.write("{}\n{}\n----".format(self.test_activity, predicted_output))
@@ -313,8 +313,8 @@ class CADSolver(object):
                     target.append(self.test_activity[i])
                     output.append(predicted_output[i])
 
-                print acc
-                f.write(str(acc) + "\n")
+                print acc / n
+                f.write(str(acc / n) + "\n")
 
                 if samples == 0:
                     samples = n
@@ -562,9 +562,9 @@ class CADSolver(object):
 
             start_train = timeit.default_timer()
             self.trains_fn(self.train_thh, self.train_too, self.train_soo, self.train_soh,
-                           self.train_human.reshape((-1)))
+                           self.train_human_anticipation.reshape((-1)))
             self.traino_fn(self.train_too, self.train_soo, self.train_soh,
-                           self.test_objects_anticipation.reshape((-1)))
+                           self.train_objects_anticipation.reshape((-1)))
             stop_train = timeit.default_timer()
             print "Train time = " + str(stop_train - start_train) + " seconds"
             f.write("Train time = " + str(stop_train - start_train) + " seconds")
