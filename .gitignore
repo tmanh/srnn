@@ -99,3 +99,13 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# This project
+*.txt
+*.pik
+*.ups
+*.pms
+
+data/features_cad120/high-level-activity-labels
+
+*.npy
