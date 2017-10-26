@@ -24,6 +24,8 @@ node_s_h_o_dim = 0
 edge_t_o_o_dim = 0
 edge_t_h_h_dim = 0
 
+max_objects = 0
+
 
 def sample_subsequences(length, num_samples=1, min_len=1, max_len=10):
     max_len = min(max_len, length)
@@ -334,7 +336,7 @@ def read_high_level_activity_groundtruth(fin):
 
 # input is node_object features
 def find_maximum_objects(features_list):
-    max_objects = 0
+    global max_objects
 
     for f in features_list:
         if max_objects < len(f):
@@ -568,11 +570,14 @@ def append2array(a, add, choose_list=None):
     return temp_array
 
 
-def save_data2files(folder, train_activities, test_activities):
+def save_data2files(folder, save_path, train_activities, test_activities):
     high_level_activities = '/home/anhtruong/Workspace/srnn/data/features_cad120/high-level-activity_groundtruth.txt'
-    dataset = '/home/anhtruong/Workspace/srnn/data/features_cad120/dataset/fold_{0}'.format(fold)
+    dataset = '{0}fold_{1}'.format(save_path, fold)
 
     high_level_activity_groundtruth = read_high_level_activity_groundtruth(high_level_activities)
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
 
     if not os.path.exists(dataset):
         os.mkdir(dataset)
@@ -589,6 +594,8 @@ def save_data2files(folder, train_activities, test_activities):
 if __name__ == '__main__':
     train_activities = []
     test_activities = []
+
+    destination = "/home/anhtruong/Workspace/srnn/data/CAD-120/"
 
     folds = ['1', '2', '3', '4']
     for fold in folds:
@@ -623,4 +630,4 @@ if __name__ == '__main__':
         N = len(train_activities) + len(test_activities)
         print N
 
-        save_data2files(s, train_activities, test_activities)
+        save_data2files(s, destination, train_activities, test_activities)
