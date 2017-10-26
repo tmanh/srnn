@@ -114,6 +114,59 @@ def test_m2i(view):
 #######################################################################################################################
 
 
+def sbu_evaluate(y, ske1, ske2, thh1, thh2, shh):
+    list_acc = []
+    list_output = []
+    list_target = []
+
+    all_acc = 0
+    trials = 0
+
+    for t in range(5):
+        permutations = shuffle(len(list_y))
+
+        for fold in range(5):
+            trials += 1
+
+            [train_y, train_ske1, train_ske2, train_thh1, train_thh2, train_shh,
+             test_y, test_ske1, test_ske2, test_thh1, test_thh2, test_shh] = \
+                get_train_test_data(y, ske1, ske2, thh1, thh2, shh, permutations, fold)
+
+            solver = SBUSolver(train_y, train_ske1, train_ske2, train_thh1, train_thh2, train_shh,
+                               test_y, test_ske1, test_ske2, test_thh1, test_thh2, test_shh, fold)
+            acc, output, target = solver.solve()
+
+            all_acc += acc
+
+            print (all_acc / trials)
+
+            list_acc.append(acc)
+            list_output.append(output)
+            list_target.append(target)
+
+    np.save("sbu_acc.ny", list_acc)
+    np.save("sbu_output.ny", list_output)
+    np.save("sbu_target.ny", list_target)
+
+
+def test_sbu():
+    main_path = './data/SBU'
+    path_to_dataset = '{1}/{0}.pik'.format("dataset", main_path)
+
+    data = cPickle.load(open(path_to_dataset))
+
+    y = data['labels']
+    thh1 = data['temporal_human_human_1']
+    thh2 = data['temporal_human_human_2']
+    ske1 = data['ske_1']
+    ske2 = data['ske_2']
+    shh = data['spatial_human_human']
+
+    sbu_evaluate(y, thh1, thh2, shh, ske1, ske2)
+
+#######################################################################################################################
+
+
 def cad():
     for i in range(0, 4):
         test_cad(mode=i)
@@ -122,6 +175,11 @@ def cad():
 def m2i():
     for i in range(0, 1):
         test_m2i(view=i)
+
+
+def sbu():
+    for i in range(0, 1):
+        test_sbu()
 
 
 # parameter : gpu device, cnmem value, dataset
@@ -137,6 +195,9 @@ if __name__ == '__main__':
         cad()
     elif sys.argv[3] == 'sbu':
         print "SBU"
+
+        from solver.sbu_solver import *
+        sbu()
     elif sys.argv[3] == 'm2i':
         print "M2I"
 
