@@ -243,9 +243,9 @@ class CADSolverOri(object):
         self.sprediction = lasagne.layers.get_output(self.l_subout)
         self.oprediction = lasagne.layers.get_output(self.l_objout)
 
-        self.aloss = CADSolver.create_loss(self.aprediction, self.l_actout, self.target_var)
-        self.sloss = CADSolver.create_loss(self.sprediction, self.l_subout, self.target_var)
-        self.oloss = CADSolver.create_loss(self.oprediction, self.l_objout, self.target_var)
+        self.aloss = CADSolverOri.create_loss(self.aprediction, self.l_actout, self.target_var)
+        self.sloss = CADSolverOri.create_loss(self.sprediction, self.l_subout, self.target_var)
+        self.oloss = CADSolverOri.create_loss(self.oprediction, self.l_objout, self.target_var)
 
         # create parameter update expressions
         self.aparams = lasagne.layers.get_all_params(self.l_actout, trainable=True)
@@ -275,9 +275,9 @@ class CADSolverOri(object):
         self.tests_prediction = llayers.get_output(self.l_subout, deterministic=True)
         self.testo_prediction = llayers.get_output(self.l_objout, deterministic=True)
 
-        self.predicta_fn = CADSolver.create_testfn(test_actdim, self.testa_prediction)
-        self.predicts_fn = CADSolver.create_testfn(test_subdim, self.tests_prediction)
-        self.predicto_fn = CADSolver.create_testfn(test_objdim, self.testo_prediction)
+        self.predicta_fn = CADSolverOri.create_testfn(test_actdim, self.testa_prediction)
+        self.predicts_fn = CADSolverOri.create_testfn(test_subdim, self.tests_prediction)
+        self.predicto_fn = CADSolverOri.create_testfn(test_objdim, self.testo_prediction)
 
     def activity(self):
         # train network (assuming you've got some training data
