@@ -185,8 +185,8 @@ def sbu():
 # parameter : gpu device, cnmem value, dataset
 # list datasets: cad, sbu, m2i
 if __name__ == '__main__':
-    # set_environ(sys.argv[1], sys.argv[2])
-    set_environ("cpu", "0.8")
+    set_environ(sys.argv[1], sys.argv[2])
+    # set_environ("cpu", "0.8")
 
     if sys.argv[3] == 'cad':
         print "CAD"
