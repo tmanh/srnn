@@ -24,7 +24,7 @@ from utils import *
 # All gradients above this will be clipped
 GRAD_CLIP = 100
 # Optimization learning rate
-LEARNING_RATE = 0.1
+LEARNING_RATE = 1e-2
 # Regularization rate
 REGULARIZE_RATE = 1e-4
 
